@@ -310,7 +310,7 @@ if [ ! -f "$flag" ];then
     muls -l="$data/tsis.meta" -P=$password -t=300 -c="sudo bash -c '$cmd'" -sudo -v &> $data/log.install_meta
     [ -f "$data/log.install_meta" ] || my_error "failed to exec batRun"
     grep -P '^[0-9]+%|Install all packages successfully!' $data/log.install_meta | awk -v RS=[0-9]*% '(NR>1){gsub("\n"," ",$0);print $0;}' | \
-        grep -v 'Install all packages successfully!' && my_error "error found while installing meta"
+    grep  'ERROR' && my_error "error found while installing meta"
     touch "$flag"
 fi
 
@@ -500,6 +500,10 @@ if [ ! -f "$flag" ];then
     cd ~/modify
     if [ `grep -E "刷新|元信息"  $data/hostlist|awk -F "," '{print $1}'|sort -u|wc -l` -eq 2 ];then
         for each in `grep -E "刷新|元信息"  $data/hostlist|awk -F "," '{print $1}'|sort -u`
+        do
+            bash modify_role.sh $each ATSCacheMetaRefresh &>/dev/null
+        done
+	for each in `cat $data/remove_device`
         do
             bash modify_role.sh $each ATSCacheMetaRefresh &>/dev/null
         done
