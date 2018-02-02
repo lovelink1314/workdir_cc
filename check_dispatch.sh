@@ -83,26 +83,32 @@ fi
 cms3Ary=(`ls /opt/cms3/proj/tm_dispatch | grep -E "*_[0-9]+$"`)
 for cr in ${cms3Ary[@]}
 do
-    djava=`ps -ef | grep java | grep "/opt/cms3/proj/tm_dispatch/$cr" | wc -l`
-    if [ $djava -ne 1 ];then
-        datestamp=`date +"%F %T"` 
-        ps -ef | grep "/opt/cms3/proj/tm_dispatch/$cr" | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
-        cd /opt/cms3/proj/tm_dispatch/$cr/bin > /dev/null 2>&1 
-        rm -f /opt/cms3/proj/tm_dispatch/$cr/channel_dealing.tmp
-        rm -f /opt/cms3/data/$cr/bakdata/tmpdata/backup.tmp
-        sh start.sh $cr > /dev/null 2>&1
-        sleep 3
-        cjava=`ps -ef | grep java | grep "/opt/cms3/proj/tm_dispatch/$cr" | wc -l`
-        if [ $cjava -ne 1 ];then
-            echo "$datestamp failed cms3 $cr" >> $restartLog
-            echo 2
-            exit 0
-        else 
-            echo "$datestamp success cms3 $cr " >> $restartLog
+    process_log="/opt/cms3/proj/tm_dispatch/$cr/logs/process.log"
+    tail -n 1 $process_log|grep -q "last backup Exception"
+    if [ $? -eq 0 ];then
+        echo 3
+        exit 0
+    else
+        djava=`ps -ef | grep java | grep "/opt/cms3/proj/tm_dispatch/$cr" | wc -l`
+        if [ $djava -ne 1 ];then
+            datestamp=`date +"%F %T"` 
+            ps -ef | grep "/opt/cms3/proj/tm_dispatch/$cr" | grep -v grep | awk '{print $2}' | xargs kill -9 > /dev/null 2>&1
+            cd /opt/cms3/proj/tm_dispatch/$cr/bin > /dev/null 2>&1 
+            rm -f /opt/cms3/proj/tm_dispatch/$cr/channel_dealing.tmp
+            rm -f /opt/cms3/data/$cr/bakdata/tmpdata/backup.tmp
+            sh start.sh $cr > /dev/null 2>&1
+            sleep 3
+            cjava=`ps -ef | grep java | grep "/opt/cms3/proj/tm_dispatch/$cr" | wc -l`
+            if [ $cjava -ne 1 ];then
+                echo "$datestamp failed cms3 $cr" >> $restartLog
+                echo 2
+                exit 0
+            else 
+                echo "$datestamp success cms3 $cr " >> $restartLog
+            fi
         fi
     fi
 done
 
 echo 0
 exit 0
-
