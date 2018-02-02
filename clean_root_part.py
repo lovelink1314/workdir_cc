@@ -158,6 +158,13 @@ if os.path.exists(tempfile_dir) and os.path.isdir(tempfile_dir):
     cmd='find /data/proclog/log/hpc/access -type f -mtime +13 -exec rm -rf {} \;'
     os.system(cmd)
 
+#del /data/proclog/log/hpc/access/.upload/.NLA > 1day data
+tempfile_dir = "/data/proclog/log/hpc/access/.upload/.NLA"
+if os.path.exists(tempfile_dir) and os.path.isdir(tempfile_dir):
+    cmd='find /data/proclog/log/hpc/access/.upload/.NLA -type f  -exec rm -rf {} \;'
+    os.system(cmd)
+
+
 # del /data/proclog/log/hpc/flexi_billing >30day data
 tempfile_dir = "/data/proclog/log/hpc/flexi_billing"
 if os.path.exists(tempfile_dir) and os.path.isdir(tempfile_dir):
@@ -185,7 +192,7 @@ if os.path.exists(tempfile_dir) and os.path.isdir(tempfile_dir):
 # del /data/proclog/log/ccts >1day data
 tempfile_dir = "/data/proclog/log/ccts"
 if os.path.exists(tempfile_dir) and os.path.isdir(tempfile_dir):
-    cmd='find /data/proclog/log/ccts -name "*old" -type f -mtime +1 -exec rm -rf  {} \;'
+    cmd='find /data/proclog/log/ccts -name "*old" -type f -mtime 1 -exec rm -rf  {} \;'
     os.system(cmd)
 
 # del /data/proclog/core_file 10 keep file
