@@ -1,0 +1,3 @@
+0 0 * * * root sh /ops_hpcc/ops_shells/hpccstat.sh -p60 -d1440 > /dev/null 2>&1
+*/1 * * * * root sh /ops_hpcc/ops_shells/hpccstat_watch.sh > /dev/null 2>&1
+0,30 * * * * root sh /ops_hpcc/ops_shells/hpccstat_upload.sh > /dev/null 2>&1
